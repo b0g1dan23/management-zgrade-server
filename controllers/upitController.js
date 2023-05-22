@@ -1,13 +1,20 @@
 import Upit from "../models/Upit.js";
 
-export const fetchUpiti = async (_, res) => {
+export const fetchUpiti = async (req, res) => {
   try {
-    const upiti = await Upit.find()
-      .populate("idStatusa", "naziv")
-      .populate("idZgrade", ["ulica", "broj"])
-      .populate("idRadnika", ["ime", "prezime", "mailAdresa"])
-      .select(["-__v"]);
-    res.send(upiti);
+    if (req.query.startDate && req.query.endDate) {
+      const upiti = await Upit.find({
+        createdAt: { $gte: req.query.startDate, $lte: req.query.endDate },
+      });
+      res.send(upiti);
+    } else {
+      const upiti = await Upit.find()
+        .populate("idStatusa", "naziv")
+        .populate("idZgrade", ["ulica", "broj"])
+        .populate("idRadnika", ["ime", "prezime", "mailAdresa"])
+        .select(["-__v"]);
+      res.send(upiti);
+    }
   } catch (err) {
     res.status(500).send(err.message);
   }
