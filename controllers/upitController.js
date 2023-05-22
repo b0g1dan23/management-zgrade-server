@@ -5,7 +5,7 @@ export const fetchUpiti = async (req, res) => {
     if (req.query.startDate && req.query.endDate) {
       const upiti = await Upit.find({
         createdAt: { $gte: req.query.startDate, $lte: req.query.endDate },
-      });
+      }).populate("idZgrade", ["ulica", "broj"]);
       res.send(upiti);
     } else {
       const upiti = await Upit.find()
